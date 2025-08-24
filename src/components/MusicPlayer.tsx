@@ -1,12 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Play, Pause } from 'lucide-react';
 
 const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const longPressTimerRef = useRef<number | null>(null);
 
   const tracks = [
     { name: "Tujhe Dekha Toh", file: "/Tujhe Dekha Toh - 1.mp3" },
@@ -14,104 +12,89 @@ const MusicPlayer = () => {
     { name: "Ho Gaya Hai Tujhko", file: "/Ho Gaya Hai Tujhko - 3.mp3" }
   ];
 
-  // Initialize audio when component mounts or track changes
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-    // Set volume and prepare audio
-    audio.volume = 0.5;
-    audio.load();
-
-    // Handle when track ends
-    const handleEnded = () => {
-      const nextTrack = (currentTrack + 1) % tracks.length;
-      setCurrentTrack(nextTrack);
-      setIsPlaying(false);
-    };
-
-    audio.addEventListener('ended', handleEnded);
-    return () => audio.removeEventListener('ended', handleEnded);
-  }, [currentTrack]);
-
-  // Handle play/pause
-  const togglePlayback = async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    try {
-      if (isPlaying) {
-        audio.pause();
+  // Create audio element if it doesn't exist
+  const getAudio = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(tracks[currentTrack].file);
+      audioRef.current.volume = 0.5;
+      audioRef.current.addEventListener('ended', () => {
         setIsPlaying(false);
-      } else {
-        await audio.play();
-        setIsPlaying(true);
-      }
-    } catch (error) {
-      console.error('Playback failed:', error);
+        const nextTrack = (currentTrack + 1) % tracks.length;
+        setCurrentTrack(nextTrack);
+      });
+    }
+    return audioRef.current;
+  };
+
+  const handlePlayPause = () => {
+    console.log('Button clicked!'); // Debug log
+    const audio = getAudio();
+    
+    if (isPlaying) {
+      audio.pause();
       setIsPlaying(false);
+      console.log('Paused');
+    } else {
+      audio.src = tracks[currentTrack].file;
+      audio.play()
+        .then(() => {
+          setIsPlaying(true);
+          console.log('Playing');
+        })
+        .catch((error) => {
+          console.error('Play failed:', error);
+          setIsPlaying(false);
+        });
     }
   };
 
-  // Handle track selection
-  const selectTrack = (trackIndex: number) => {
-    setCurrentTrack(trackIndex);
+  const selectTrack = (index: number) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setCurrentTrack(index);
     setIsPlaying(false);
     setShowPlaylist(false);
-  };
-
-  // Long press handlers
-  const startLongPress = () => {
-    longPressTimerRef.current = window.setTimeout(() => {
-      setShowPlaylist(true);
-    }, 800);
-  };
-
-  const endLongPress = () => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  };
-
-  // Handle click (only if not long press)
-  const handleClick = () => {
-    if (!showPlaylist) {
-      togglePlayback();
+    // Reset audio for new track
+    if (audioRef.current) {
+      audioRef.current.src = tracks[index].file;
     }
   };
 
   return (
-    <>
-      <div className="fixed top-6 right-6 z-50">
+    <div className="fixed top-6 right-6 z-50">
+      {/* Main Play Button */}
+      <div className="relative">
         <button
-          onClick={handleClick}
-          onMouseDown={startLongPress}
-          onMouseUp={endLongPress}
-          onMouseLeave={endLongPress}
-          onTouchStart={startLongPress}
-          onTouchEnd={endLongPress}
-          className="p-4 rounded-full bg-romantic-rose/20 hover:bg-romantic-rose/30 transition-all duration-300 hover:scale-110 shadow-lg backdrop-blur-sm border border-romantic-rose/30"
-          aria-label={isPlaying ? "Pause music" : "Play music"}
+          onClick={handlePlayPause}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            setShowPlaylist(!showPlaylist);
+          }}
+          className="p-4 rounded-full bg-pink-500/20 hover:bg-pink-500/30 transition-all duration-200 shadow-lg border border-pink-500/40 cursor-pointer"
+          style={{ WebkitTapHighlightColor: 'transparent' }}
         >
           {isPlaying ? (
-            <Pause className="w-6 h-6 text-romantic-rose" />
+            <Pause className="w-6 h-6 text-pink-400" />
           ) : (
-            <Play className="w-6 h-6 text-romantic-rose" />
+            <Play className="w-6 h-6 text-pink-400" />
           )}
         </button>
 
+        {/* Playlist Dropdown */}
         {showPlaylist && (
-          <div className="absolute top-full right-0 mt-3 bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-xl min-w-[220px] py-2 z-[60]">
-            <div className="px-4 py-2 text-xs text-muted-foreground font-semibold border-b border-border">
+          <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 border rounded-lg shadow-xl min-w-[200px] py-1 z-[60]">
+            <div className="px-3 py-2 text-xs text-gray-500 font-medium border-b">
               Choose Song
             </div>
             {tracks.map((track, index) => (
               <button
                 key={index}
                 onClick={() => selectTrack(index)}
-                className={`w-full text-left px-4 py-3 text-sm hover:bg-accent/50 transition-colors ${
-                  index === currentTrack ? 'bg-accent text-accent-foreground font-medium' : 'text-foreground'
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                  index === currentTrack ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
                 }`}
               >
                 {track.name}
@@ -119,7 +102,7 @@ const MusicPlayer = () => {
             ))}
             <button
               onClick={() => setShowPlaylist(false)}
-              className="w-full text-left px-4 py-2 text-xs text-muted-foreground hover:bg-accent/50 transition-colors border-t border-border mt-1"
+              className="w-full text-left px-3 py-1 text-xs text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 border-t"
             >
               Close
             </button>
@@ -127,21 +110,14 @@ const MusicPlayer = () => {
         )}
       </div>
 
-      {/* Click outside to close playlist */}
+      {/* Click outside to close */}
       {showPlaylist && (
         <div 
           className="fixed inset-0 z-40" 
           onClick={() => setShowPlaylist(false)}
         />
       )}
-
-      {/* Audio element */}
-      <audio
-        ref={audioRef}
-        src={tracks[currentTrack].file}
-        preload="auto"
-      />
-    </>
+    </div>
   );
 };
 
