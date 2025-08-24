@@ -169,6 +169,17 @@ const MusicPlayer = () => {
         onPlay={() => console.log('▶️ Audio started playing')}
         onPause={() => console.log('⏸️ Audio paused')}
       />
+
+      {/* Hidden audio elements to force deployment inclusion */}
+      <audio style={{ display: "none" }} controls>
+        <source src="/TujheDekhaToh1.mp3" type="audio/mpeg" />
+      </audio>
+      <audio style={{ display: "none" }} controls>
+        <source src="/MehndiLagaKeRakhna2.mp3" type="audio/mpeg" />
+      </audio>
+      <audio style={{ display: "none" }} controls>
+        <source src="/HoGayaHaiTujhko3.mp3" type="audio/mpeg" />
+      </audio>
     </div>
   );
 };
