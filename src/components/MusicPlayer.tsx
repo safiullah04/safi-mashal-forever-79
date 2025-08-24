@@ -81,6 +81,23 @@ const MusicPlayer = () => {
     }
   };
 
+  const handleTouchStart = () => {
+    const timer = window.setTimeout(() => {
+      setShowPlaylist(true);
+    }, 500);
+    setLongPressTimer(timer);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+    if (!showPlaylist) {
+      toggleMusic();
+    }
+  };
+
   return (
     <div className="fixed top-4 right-4 z-50">
       <div className="relative">
@@ -88,7 +105,9 @@ const MusicPlayer = () => {
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className="p-2 hover:scale-110 transition-transform duration-300 flex items-center gap-1"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="p-3 hover:scale-110 transition-transform duration-300 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-lg border border-border"
           aria-label={isPlaying ? "Pause music" : "Play music"}
         >
           {isPlaying ? (
@@ -100,7 +119,7 @@ const MusicPlayer = () => {
         </button>
         
         {showPlaylist && (
-          <div className="absolute top-full right-0 mt-1 bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-lg min-w-[200px] py-1">
+          <div className="absolute top-full right-0 mt-2 bg-background border border-border rounded-lg shadow-lg min-w-[200px] py-1 z-[60]">
             <div className="px-3 py-1 text-xs text-muted-foreground font-medium border-b border-border">
               Select Track
             </div>

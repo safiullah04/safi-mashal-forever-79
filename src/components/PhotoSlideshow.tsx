@@ -79,8 +79,8 @@ const PhotoSlideshow = () => {
   }
 
   return (
-    <div className="slideshow-container">
-      <div className="relative w-full max-w-md mx-auto aspect-square rounded-lg overflow-hidden">
+    <div className="slideshow-container w-full flex justify-center">
+      <div className="relative w-full max-w-sm aspect-square rounded-lg overflow-hidden">
         {shuffledImages.map((imagePath, index) => (
           <div
             key={imagePath}
@@ -91,7 +91,7 @@ const PhotoSlideshow = () => {
             <img
               src={imagePath}
               alt={`Love story moment ${index + 1}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
               loading="lazy"
             />
           </div>
