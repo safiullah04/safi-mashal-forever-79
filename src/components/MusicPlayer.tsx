@@ -57,16 +57,16 @@ const MusicPlayer = () => {
   };
 
   return (
-    <div className="fixed top-6 right-6 z-50" style={{ marginRight: '2rem' }}>
+    <div className="fixed top-4 right-4 z-50">
       <button
         onClick={toggleMusic}
-        className="romantic-card p-3 rounded-full hover:scale-110 transition-transform duration-300 romantic-glow"
+        className="p-2 hover:scale-110 transition-transform duration-300"
         aria-label={isPlaying ? "Pause music" : "Play music"}
       >
         {isPlaying ? (
-          <Pause className="w-6 h-6 text-romantic-rose" />
+          <Pause className="w-5 h-5 text-romantic-rose/80" />
         ) : (
-          <Play className="w-6 h-6 text-romantic-rose" />
+          <Play className="w-5 h-5 text-romantic-rose/80" />
         )}
       </button>
       
@@ -78,11 +78,6 @@ const MusicPlayer = () => {
         <source src={musicUrl} type="audio/wav" />
         Your browser does not support the audio element.
       </audio>
-      
-      {/* Music note indicator */}
-      <div className="absolute -top-2 -right-2 animate-bounce">
-        <Music className="w-4 h-4 text-romantic-gold" />
-      </div>
     </div>
   );
 };
