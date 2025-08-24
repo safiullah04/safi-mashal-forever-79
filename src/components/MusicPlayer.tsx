@@ -1,23 +1,25 @@
 import { useState, useRef, useEffect } from 'react';
-import { Music, Pause, Play } from 'lucide-react';
+import { Music, Pause, Play, ChevronDown } from 'lucide-react';
 
 const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Using a placeholder audio file - replace with "Tujhe Dekha To" from DDLJ
-  // You'll need to:
-  // 1. Obtain legal rights to use the song
-  // 2. Convert to web-compatible format (MP3/OGG/WAV)
-  // 3. Host the file or use a streaming service
-  // 4. Replace the URL below with your audio file
-  const musicUrl = "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"; // Placeholder - replace with actual song
+  const tracks = [
+    { name: "Tujhe Dekha Toh", file: "/Tujhe Dekha Toh - 1.mp3" },
+    { name: "Mehndi Laga Ke Rakhna", file: "/Mehndi Laga Ke Rakhna - 2.mp3" },
+    { name: "Ho Gaya Hai Tujhko", file: "/Ho Gaya Hai Tujhko - 3.mp3" }
+  ];
 
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
       audio.volume = 0.3;
+      audio.src = tracks[currentTrack].file;
       
       const handleCanPlayThrough = () => {
         setIsLoaded(true);
@@ -27,10 +29,9 @@ const MusicPlayer = () => {
       };
 
       const handleEnded = () => {
-        audio.currentTime = 0;
-        if (isPlaying) {
-          audio.play().catch(console.error);
-        }
+        // Move to next track or loop back to first
+        const nextTrack = (currentTrack + 1) % tracks.length;
+        setCurrentTrack(nextTrack);
       };
 
       audio.addEventListener('canplaythrough', handleCanPlayThrough);
@@ -41,7 +42,7 @@ const MusicPlayer = () => {
         audio.removeEventListener('ended', handleEnded);
       };
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentTrack]);
 
   const toggleMusic = () => {
     const audio = audioRef.current;
@@ -49,33 +50,86 @@ const MusicPlayer = () => {
       if (isPlaying) {
         audio.pause();
       } else {
-        audio.currentTime = 0; // Reset to start as requested
         audio.play().catch(console.error);
       }
       setIsPlaying(!isPlaying);
     }
   };
 
+  const handleMouseDown = () => {
+    const timer = window.setTimeout(() => {
+      setShowPlaylist(true);
+    }, 500); // 500ms long press
+    setLongPressTimer(timer);
+  };
+
+  const handleMouseUp = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+    if (!showPlaylist) {
+      toggleMusic();
+    }
+  };
+
+  const selectTrack = (index: number) => {
+    setCurrentTrack(index);
+    setShowPlaylist(false);
+    if (!isPlaying) {
+      setIsPlaying(true);
+    }
+  };
+
   return (
     <div className="fixed top-4 right-4 z-50">
-      <button
-        onClick={toggleMusic}
-        className="p-2 hover:scale-110 transition-transform duration-300"
-        aria-label={isPlaying ? "Pause music" : "Play music"}
-      >
-        {isPlaying ? (
-          <Pause className="w-5 h-5 text-romantic-rose/80" />
-        ) : (
-          <Play className="w-5 h-5 text-romantic-rose/80" />
+      <div className="relative">
+        <button
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className="p-2 hover:scale-110 transition-transform duration-300 flex items-center gap-1"
+          aria-label={isPlaying ? "Pause music" : "Play music"}
+        >
+          {isPlaying ? (
+            <Pause className="w-5 h-5 text-romantic-rose/80" />
+          ) : (
+            <Play className="w-5 h-5 text-romantic-rose/80" />
+          )}
+          <ChevronDown className="w-3 h-3 text-romantic-rose/60" />
+        </button>
+        
+        {showPlaylist && (
+          <div className="absolute top-full right-0 mt-1 bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-lg min-w-[200px] py-1">
+            <div className="px-3 py-1 text-xs text-muted-foreground font-medium border-b border-border">
+              Select Track
+            </div>
+            {tracks.map((track, index) => (
+              <button
+                key={index}
+                onClick={() => selectTrack(index)}
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors ${
+                  index === currentTrack ? 'bg-accent text-accent-foreground font-medium' : ''
+                }`}
+              >
+                {track.name}
+              </button>
+            ))}
+            <button
+              onClick={() => setShowPlaylist(false)}
+              className="w-full text-left px-3 py-1 text-xs text-muted-foreground hover:bg-accent transition-colors border-t border-border"
+            >
+              Close
+            </button>
+          </div>
         )}
-      </button>
+      </div>
       
       <audio
         ref={audioRef}
         preload="auto"
-        loop
       >
-        <source src={musicUrl} type="audio/wav" />
+        <source src={tracks[currentTrack].file} type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
     </div>
