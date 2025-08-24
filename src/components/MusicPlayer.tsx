@@ -62,12 +62,23 @@ const MusicPlayer = () => {
 
   const selectTrack = (index: number) => {
     const audio = audioRef.current;
-    if (audio && !audio.paused) {
+    if (audio) {
       audio.pause();
+      setCurrentTrack(index);
+      setIsPlaying(false);
+      
+      // Load and play new track
+      const audioSrc = `/${tracks[index].file}.mp3`;
+      audio.src = audioSrc;
+      audio.load();
+      setIsLoaded(true);
+      
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch((error) => {
+        console.error('Play failed:', error);
+      });
     }
-    setCurrentTrack(index);
-    setIsPlaying(false);
-    setIsLoaded(false);
     setShowPlaylist(false);
   };
 
