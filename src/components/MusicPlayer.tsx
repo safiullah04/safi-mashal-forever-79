@@ -18,34 +18,49 @@ const MusicPlayer = () => {
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && !isLoaded) {
+      console.log('🎵 Auto-loading first track...');
       const audioSrc = `/${tracks[currentTrack].file}.mp3`;
+      console.log('🎵 Audio source:', audioSrc);
       audio.src = audioSrc;
       audio.load();
       setIsLoaded(true);
       
-      // Autoplay
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch((error) => {
-        console.log('Autoplay blocked:', error);
-      });
+      // Try autoplay with user gesture fallback
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log('✅ Autoplay successful');
+          setIsPlaying(true);
+        }).catch((error) => {
+          console.log('❌ Autoplay blocked:', error);
+          console.log('📱 Click play button to start music');
+        });
+      }
     }
-  }, []);
+  }, [currentTrack, isLoaded]);
 
   const handlePlayPause = () => {
+    console.log('🎵 Play/Pause clicked - Current state:', { isPlaying, currentTrack, isLoaded });
     const audio = audioRef.current;
     
     if (!audio) {
-      console.error('Audio element not found');
+      console.error('❌ Audio element not found');
       return;
     }
 
     if (isPlaying) {
+      console.log('⏸️ Pausing...');
       audio.pause();
       setIsPlaying(false);
     } else {
-      // Only load if not already loaded or different track
-      if (!isLoaded || audio.src !== `${window.location.origin}/${tracks[currentTrack].file}.mp3`) {
+      console.log('▶️ Playing...');
+      const expectedSrc = `${window.location.origin}/${tracks[currentTrack].file}.mp3`;
+      console.log('🎵 Expected source:', expectedSrc);
+      console.log('🎵 Current source:', audio.src);
+      
+      // Always reload if source doesn't match
+      if (audio.src !== expectedSrc) {
+        console.log('🔄 Reloading audio source...');
         const audioSrc = `/${tracks[currentTrack].file}.mp3`;
         audio.src = audioSrc;
         audio.load();
@@ -53,31 +68,42 @@ const MusicPlayer = () => {
       }
       
       audio.play().then(() => {
+        console.log('✅ Playing successfully');
         setIsPlaying(true);
       }).catch((error) => {
-        console.error('Play failed:', error);
+        console.error('❌ Play failed:', error);
+        alert(`Play failed: ${error.message}`);
       });
     }
   };
 
   const selectTrack = (index: number) => {
+    console.log('🎵 Selecting track:', tracks[index].name, 'Index:', index);
     const audio = audioRef.current;
     if (audio) {
+      console.log('⏸️ Pausing current track...');
       audio.pause();
-      setCurrentTrack(index);
       setIsPlaying(false);
       
-      // Load and play new track
+      console.log('🔄 Loading new track...');
+      setCurrentTrack(index);
+      
+      // Force reload new track
       const audioSrc = `/${tracks[index].file}.mp3`;
+      console.log('🎵 New audio source:', audioSrc);
       audio.src = audioSrc;
       audio.load();
       setIsLoaded(true);
       
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch((error) => {
-        console.error('Play failed:', error);
-      });
+      // Auto-play new track
+      setTimeout(() => {
+        audio.play().then(() => {
+          console.log('✅ New track playing');
+          setIsPlaying(true);
+        }).catch((error) => {
+          console.error('❌ New track play failed:', error);
+        });
+      }, 100);
     }
     setShowPlaylist(false);
   };
@@ -85,6 +111,10 @@ const MusicPlayer = () => {
   return (
     <div className="fixed top-6 right-6 z-50">
       <div className="relative">
+        {/* Debug info */}
+        <div className="absolute -top-8 right-0 text-xs text-white bg-black px-2 py-1 rounded">
+          {isPlaying ? 'PLAYING' : 'PAUSED'} | Track {currentTrack + 1} | Loaded: {isLoaded ? 'YES' : 'NO'}
+        </div>
         
         <button
           onClick={handlePlayPause}
