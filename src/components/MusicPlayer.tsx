@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Play, Pause } from 'lucide-react';
 
 const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const tracks = [
@@ -12,6 +13,24 @@ const MusicPlayer = () => {
     { name: "Mehndi Laga Ke Rakhna", file: "MehndiLagaKeRakhna2" },
     { name: "Ho Gaya Hai Tujhko", file: "HoGayaHaiTujhko3" }
   ];
+
+  // Auto-load first song on mount
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && !isLoaded) {
+      const audioSrc = `/${tracks[currentTrack].file}.mp3`;
+      audio.src = audioSrc;
+      audio.load();
+      setIsLoaded(true);
+      
+      // Autoplay
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch((error) => {
+        console.log('Autoplay blocked:', error);
+      });
+    }
+  }, []);
 
   const handlePlayPause = () => {
     const audio = audioRef.current;
@@ -25,31 +44,30 @@ const MusicPlayer = () => {
       audio.pause();
       setIsPlaying(false);
     } else {
-      // Simple approach - just set src and play
-      const audioSrc = `/${tracks[currentTrack].file}.mp3`;
-      console.log('Trying to play:', audioSrc);
-      
-      audio.src = audioSrc;
-      audio.load();
+      // Only load if not already loaded or different track
+      if (!isLoaded || audio.src !== `${window.location.origin}/${tracks[currentTrack].file}.mp3`) {
+        const audioSrc = `/${tracks[currentTrack].file}.mp3`;
+        audio.src = audioSrc;
+        audio.load();
+        setIsLoaded(true);
+      }
       
       audio.play().then(() => {
         setIsPlaying(true);
-        console.log('Playing successfully');
       }).catch((error) => {
         console.error('Play failed:', error);
-        alert(`Cannot play audio: ${error.message}`);
       });
     }
   };
 
   const selectTrack = (index: number) => {
-    console.log('🎵 Selecting track:', tracks[index].name);
     const audio = audioRef.current;
     if (audio && !audio.paused) {
       audio.pause();
     }
     setCurrentTrack(index);
     setIsPlaying(false);
+    setIsLoaded(false);
     setShowPlaylist(false);
   };
 
@@ -67,13 +85,13 @@ const MusicPlayer = () => {
             e.preventDefault();
             setShowPlaylist(!showPlaylist);
           }}
-          className="p-4 rounded-full bg-pink-500/20 hover:bg-pink-500/30 transition-all duration-200 shadow-lg border border-pink-500/40 cursor-pointer touch-manipulation active:scale-95"
+          className="text-pink-400 hover:text-pink-300 transition-colors duration-200"
           type="button"
         >
           {isPlaying ? (
-            <Pause className="w-6 h-6 text-pink-400" />
+            <Pause className="w-6 h-6" />
           ) : (
-            <Play className="w-6 h-6 text-pink-400" />
+            <Play className="w-6 h-6" />
           )}
         </button>
 
@@ -116,10 +134,10 @@ const MusicPlayer = () => {
         ref={audioRef}
         preload="auto"
         onEnded={() => {
-          console.log('🎵 Track ended');
           setIsPlaying(false);
           const nextTrack = (currentTrack + 1) % tracks.length;
           setCurrentTrack(nextTrack);
+          setIsLoaded(false);
         }}
         onError={(e) => {
           console.error('❌ Audio error:', e);
