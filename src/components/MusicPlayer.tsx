@@ -20,44 +20,25 @@ const MusicPlayer = () => {
     const audio = audioRef.current;
     if (audio) {
       audio.volume = 0.3;
-      audio.src = tracks[currentTrack].file;
+      audio.load(); // Force reload
       setIsLoaded(false);
       
       const handleCanPlayThrough = () => {
         setIsLoaded(true);
-        if (isPlaying && userInteracted) {
-          audio.play().catch(() => {
-            // If autoplay fails, just set to paused state
-            setIsPlaying(false);
-          });
-        }
       };
 
       const handleEnded = () => {
-        // Move to next track or loop back to first
         const nextTrack = (currentTrack + 1) % tracks.length;
         setCurrentTrack(nextTrack);
         setIsPlaying(true);
       };
 
-      const handlePause = () => {
-        setIsPlaying(false);
-      };
-
-      const handlePlay = () => {
-        setIsPlaying(true);
-      };
-
       audio.addEventListener('canplaythrough', handleCanPlayThrough);
       audio.addEventListener('ended', handleEnded);
-      audio.addEventListener('pause', handlePause);
-      audio.addEventListener('play', handlePlay);
 
       return () => {
         audio.removeEventListener('canplaythrough', handleCanPlayThrough);
         audio.removeEventListener('ended', handleEnded);
-        audio.removeEventListener('pause', handlePause);
-        audio.removeEventListener('play', handlePlay);
       };
     }
   }, [currentTrack]);
@@ -177,10 +158,8 @@ const MusicPlayer = () => {
       <audio
         ref={audioRef}
         preload="auto"
-      >
-        <source src={tracks[currentTrack].file} type="audio/mpeg" />
-        Your browser does not support the audio element.
-      </audio>
+        src={tracks[currentTrack].file}
+      />
     </div>
   );
 };
