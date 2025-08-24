@@ -86,7 +86,7 @@ const PhotoSlideshow = () => {
 
   return (
     <div className="slideshow-container w-full flex justify-center px-4">
-      <div className="relative w-full max-w-2xl aspect-[4/3] rounded-lg overflow-hidden bg-white">
+      <div className="relative w-full max-w-2xl aspect-[4/3] rounded-lg overflow-hidden">
         {shuffledImages.map((imagePath, index) => (
           <div
             key={imagePath}
@@ -104,8 +104,6 @@ const PhotoSlideshow = () => {
         ))}
         
         
-        {/* Gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
         
         {/* Progress indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
