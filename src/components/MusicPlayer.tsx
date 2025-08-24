@@ -28,20 +28,18 @@ const MusicPlayer = () => {
     }
   }, [currentTrack]);
 
-  const toggleMusic = async () => {
+  const toggleMusic = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    try {
-      if (isPlaying) {
-        audio.pause();
-        setIsPlaying(false);
-      } else {
-        await audio.play();
+    if (audio.paused) {
+      audio.play().then(() => {
         setIsPlaying(true);
-      }
-    } catch (error) {
-      console.log('Audio play failed:', error);
+      }).catch(() => {
+        setIsPlaying(false);
+      });
+    } else {
+      audio.pause();
       setIsPlaying(false);
     }
   };
