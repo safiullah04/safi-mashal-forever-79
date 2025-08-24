@@ -33,11 +33,11 @@ const WeddingPage = () => {
         {/* Names Header */}
         <div className="text-center mb-12 fade-in">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-calligraphy text-romantic-rose mb-4 text-glow">
-            safi & mashal
+            safi 🩷 mashal
           </h1>
           <div className="w-32 md:w-48 h-0.5 bg-gradient-to-r from-transparent via-romantic-gold to-transparent mx-auto mb-6"></div>
           <p className="text-lg md:text-xl font-elegant text-muted-foreground tracking-wider">
-            january 31, 2026 • 1:00 pm
+            january 31, 2026
           </p>
         </div>
         
