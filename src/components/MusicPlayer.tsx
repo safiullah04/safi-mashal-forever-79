@@ -38,24 +38,51 @@ const MusicPlayer = () => {
     }
   }, [currentTrack]);
 
-  const toggleMusic = () => {
+  const toggleMusic = async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (audio.paused) {
-      audio.play().catch(console.error);
-    } else {
-      audio.pause();
+    try {
+      if (audio.paused) {
+        // Ensure audio is loaded
+        if (audio.readyState < 2) {
+          await new Promise((resolve) => {
+            audio.addEventListener('canplay', resolve, { once: true });
+            audio.load();
+          });
+        }
+        await audio.play();
+        setIsPlaying(true);
+      } else {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    } catch (error) {
+      console.error('Audio play failed:', error);
+      setIsPlaying(false);
     }
   };
 
-  const selectTrack = (index: number) => {
+  const selectTrack = async (index: number) => {
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
+      setIsPlaying(false);
     }
     setCurrentTrack(index);
     setShowPlaylist(false);
+    
+    // Auto-play the new track after a brief delay
+    setTimeout(async () => {
+      if (audioRef.current) {
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (error) {
+          console.error('Failed to auto-play new track:', error);
+        }
+      }
+    }, 100);
   };
 
   const handleLongPress = () => {
@@ -121,7 +148,8 @@ const MusicPlayer = () => {
       <audio
         ref={audioRef}
         src={tracks[currentTrack].file}
-        preload="metadata"
+        preload="auto"
+        crossOrigin="anonymous"
       />
     </div>
   );
