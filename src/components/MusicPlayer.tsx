@@ -22,6 +22,24 @@ const MusicPlayer = () => {
       return;
     }
 
+    // Test if file exists first
+    const testUrl = `/${tracks[currentTrack].file}`;
+    console.log('🔍 Testing file URL:', testUrl);
+    
+    try {
+      const response = await fetch(testUrl, { method: 'HEAD' });
+      console.log('📁 File check response:', response.status);
+      if (!response.ok) {
+        console.error('❌ File not found at:', testUrl);
+        alert(`Audio file not found: ${testUrl}`);
+        return;
+      }
+    } catch (fetchError) {
+      console.error('❌ File check failed:', fetchError);
+      alert(`Cannot access audio file: ${testUrl}`);
+      return;
+    }
+
     try {
       if (isPlaying) {
         console.log('⏸️ Attempting to pause...');
@@ -31,11 +49,24 @@ const MusicPlayer = () => {
       } else {
         console.log('▶️ Attempting to play...');
         console.log('🎵 Current track:', tracks[currentTrack].name);
-        console.log('📁 File path:', tracks[currentTrack].file);
+        console.log('📁 File path:', testUrl);
         
         // Force reload the audio source
-        audio.src = `/${tracks[currentTrack].file}`;
+        audio.src = testUrl;
         audio.load();
+        
+        // Wait for canplay event
+        await new Promise((resolve, reject) => {
+          const timeoutId = setTimeout(() => reject(new Error('Audio load timeout')), 5000);
+          audio.addEventListener('canplay', () => {
+            clearTimeout(timeoutId);
+            resolve(true);
+          }, { once: true });
+          audio.addEventListener('error', () => {
+            clearTimeout(timeoutId);
+            reject(new Error('Audio load error'));
+          }, { once: true });
+        });
         
         await audio.play();
         setIsPlaying(true);
@@ -44,17 +75,7 @@ const MusicPlayer = () => {
     } catch (error) {
       console.error('❌ Audio play/pause failed:', error);
       setIsPlaying(false);
-      
-      // Try alternative approach
-      try {
-        console.log('🔄 Trying alternative play method...');
-        const newAudio = new Audio(`/${tracks[currentTrack].file}`);
-        newAudio.volume = 0.5;
-        await newAudio.play();
-        console.log('✅ Alternative method worked');
-      } catch (altError) {
-        console.error('❌ Alternative method also failed:', altError);
-      }
+      alert(`Play failed: ${error.message}`);
     }
   };
 
