@@ -20,6 +20,7 @@ const MusicPlayer = () => {
     if (audio) {
       audio.volume = 0.3;
       audio.src = tracks[currentTrack].file;
+      setIsLoaded(false);
       
       const handleCanPlayThrough = () => {
         setIsLoaded(true);
@@ -32,17 +33,30 @@ const MusicPlayer = () => {
         // Move to next track or loop back to first
         const nextTrack = (currentTrack + 1) % tracks.length;
         setCurrentTrack(nextTrack);
+        setIsPlaying(true);
+      };
+
+      const handlePause = () => {
+        setIsPlaying(false);
+      };
+
+      const handlePlay = () => {
+        setIsPlaying(true);
       };
 
       audio.addEventListener('canplaythrough', handleCanPlayThrough);
       audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('pause', handlePause);
+      audio.addEventListener('play', handlePlay);
 
       return () => {
         audio.removeEventListener('canplaythrough', handleCanPlayThrough);
         audio.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('pause', handlePause);
+        audio.removeEventListener('play', handlePlay);
       };
     }
-  }, [isPlaying, currentTrack]);
+  }, [currentTrack]);
 
   const toggleMusic = () => {
     const audio = audioRef.current;
@@ -74,9 +88,14 @@ const MusicPlayer = () => {
   };
 
   const selectTrack = (index: number) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+    }
     setCurrentTrack(index);
     setShowPlaylist(false);
     setIsPlaying(true);
+    setIsLoaded(false);
   };
 
   const handleTouchStart = () => {
