@@ -4,6 +4,7 @@ const PhotoSlideshow = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [shuffledImages, setShuffledImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showImages, setShowImages] = useState(false);
 
   // Function to shuffle array randomly
   const shuffleArray = (array: string[]) => {
@@ -36,6 +37,11 @@ const PhotoSlideshow = () => {
       const shuffled = shuffleArray(imagePaths);
       setShuffledImages(shuffled);
       setIsLoading(false);
+      
+      // Wait 2 seconds before showing images to allow loading
+      setTimeout(() => {
+        setShowImages(true);
+      }, 2000);
     };
 
     loadImages();
@@ -43,7 +49,7 @@ const PhotoSlideshow = () => {
 
   // Auto-advance slideshow
   useEffect(() => {
-    if (shuffledImages.length === 0) return;
+    if (shuffledImages.length === 0 || !showImages) return;
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
@@ -52,18 +58,20 @@ const PhotoSlideshow = () => {
     }, 4000); // Change image every 4 seconds
 
     return () => clearInterval(interval);
-  }, [shuffledImages.length]);
+  }, [shuffledImages.length, showImages]);
 
-  if (isLoading || shuffledImages.length === 0) {
+  if (isLoading || shuffledImages.length === 0 || !showImages) {
     return (
       <div className="slideshow-container">
-        <div className="text-center text-muted-foreground">
-          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-romantic-rose/20 flex items-center justify-center">
-            <span className="text-3xl">📸</span>
+        <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-romantic-rose/10 flex items-center justify-center">
+          <div className="text-center text-muted-foreground">
+            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-romantic-rose/20 flex items-center justify-center">
+              <span className="text-3xl">📸</span>
+            </div>
+            <p className="text-lg font-elegant mb-2">
+              loading our love story...
+            </p>
           </div>
-          <p className="text-lg font-elegant mb-2">
-            loading our love story...
-          </p>
         </div>
       </div>
     );
