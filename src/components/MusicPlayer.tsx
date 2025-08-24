@@ -13,71 +13,32 @@ const MusicPlayer = () => {
     { name: "Ho Gaya Hai Tujhko", file: "HoGayaHaiTujhko3" }
   ];
 
-  const handlePlayPause = async () => {
-    console.log('🎵 Button clicked - Current state:', isPlaying);
+  const handlePlayPause = () => {
     const audio = audioRef.current;
     
     if (!audio) {
-      console.error('❌ Audio element not found');
+      console.error('Audio element not found');
       return;
     }
 
-    // Test multiple formats
-    const formats = ['mp3', 'wav', 'ogg'];
-    let workingUrl = null;
-    
-    for (const format of formats) {
-      const testUrl = `/${tracks[currentTrack].file}.${format}`;
-      console.log('🔍 Testing file URL:', testUrl);
-      
-      try {
-        const response = await fetch(testUrl, { method: 'HEAD' });
-        console.log(`📁 File check response for ${format}:`, response.status);
-        if (response.ok) {
-          workingUrl = testUrl;
-          break;
-        }
-      } catch (fetchError) {
-        console.log(`❌ ${format} format not found:`, fetchError);
-      }
-    }
-    
-    if (!workingUrl) {
-      console.error('❌ No supported audio format found');
-      alert(`No supported audio format found for: ${tracks[currentTrack].name}`);
-      return;
-    }
-
-    try {
-      if (isPlaying) {
-        console.log('⏸️ Attempting to pause...');
-        audio.pause();
-        setIsPlaying(false);
-        console.log('✅ Paused successfully');
-      } else {
-        console.log('▶️ Attempting to play...');
-        console.log('🎵 Current track:', tracks[currentTrack].name);
-        console.log('📁 File path:', workingUrl);
-        
-        // Set audio source and load
-        audio.src = workingUrl;
-        audio.load();
-        
-        // Try to play directly - simpler approach
-        try {
-          await audio.play();
-          setIsPlaying(true);
-          console.log('✅ Playing successfully');
-        } catch (playError) {
-          console.error('❌ Direct play failed:', playError);
-          setIsPlaying(false);
-          alert(`Play failed: ${playError.message}`);
-        }
-      }
-    } catch (error) {
-      console.error('❌ Audio play/pause failed:', error);
+    if (isPlaying) {
+      audio.pause();
       setIsPlaying(false);
-      alert(`Play failed: ${error.message}`);
+    } else {
+      // Simple approach - just set src and play
+      const audioSrc = `/${tracks[currentTrack].file}.mp3`;
+      console.log('Trying to play:', audioSrc);
+      
+      audio.src = audioSrc;
+      audio.load();
+      
+      audio.play().then(() => {
+        setIsPlaying(true);
+        console.log('Playing successfully');
+      }).catch((error) => {
+        console.error('Play failed:', error);
+        alert(`Cannot play audio: ${error.message}`);
+      });
     }
   };
 
