@@ -1,6 +1,7 @@
 import CountdownTimer from './CountdownTimer';
 import MusicPlayer from './MusicPlayer';
 import FloatingParticles from './FloatingParticles';
+import PhotoSlideshow from './PhotoSlideshow';
 import romanticBackground from '../assets/romantic-background.jpg';
 
 const WeddingPage = () => {
@@ -48,19 +49,7 @@ const WeddingPage = () => {
         
         {/* Slideshow Section */}
         <div className="w-full max-w-4xl mb-16">
-          <div className="slideshow-container">
-            <div className="text-center text-muted-foreground">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-romantic-rose/20 flex items-center justify-center">
-                <span className="text-3xl">📸</span>
-              </div>
-              <p className="text-lg font-elegant mb-2">
-                our love story slideshow
-              </p>
-              <p className="text-sm text-muted-foreground">
-                coming soon: engagement photos with smooth transitions
-              </p>
-            </div>
-          </div>
+          <PhotoSlideshow />
         </div>
         
         {/* Footer */}
