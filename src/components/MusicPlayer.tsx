@@ -2,12 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Music, Pause, Play, ChevronDown } from 'lucide-react';
 
 const MusicPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false); // Start paused for mobile
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
-  const [longPressTimer, setLongPressTimer] = useState<number | null>(null);
-  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const tracks = [
@@ -20,105 +17,66 @@ const MusicPlayer = () => {
     const audio = audioRef.current;
     if (audio) {
       audio.volume = 0.3;
-      audio.load(); // Force reload
-      setIsLoaded(false);
       
-      const handleCanPlayThrough = () => {
-        setIsLoaded(true);
-      };
-
       const handleEnded = () => {
         const nextTrack = (currentTrack + 1) % tracks.length;
         setCurrentTrack(nextTrack);
-        setIsPlaying(true);
       };
 
-      audio.addEventListener('canplaythrough', handleCanPlayThrough);
       audio.addEventListener('ended', handleEnded);
-
-      return () => {
-        audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-        audio.removeEventListener('ended', handleEnded);
-      };
+      return () => audio.removeEventListener('ended', handleEnded);
     }
   }, [currentTrack]);
 
   const toggleMusic = async () => {
     const audio = audioRef.current;
-    if (audio && isLoaded) {
-      setUserInteracted(true);
-      
+    if (!audio) return;
+
+    try {
       if (isPlaying) {
         audio.pause();
         setIsPlaying(false);
       } else {
-        try {
-          await audio.play();
-          setIsPlaying(true);
-        } catch (error) {
-          console.log('Play failed:', error);
-          setIsPlaying(false);
-        }
+        await audio.play();
+        setIsPlaying(true);
       }
+    } catch (error) {
+      console.log('Audio play failed:', error);
+      setIsPlaying(false);
     }
   };
 
-  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-    
-    if (showPlaylist) {
-      return; // Don't toggle if playlist is open
-    }
-    
-    toggleMusic();
-  };
-
-  const handleLongPressStart = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    const timer = window.setTimeout(() => {
-      setShowPlaylist(true);
-    }, 500);
-    setLongPressTimer(timer);
-  };
-
-  const handleLongPressEnd = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-  };
-
-  const selectTrack = async (index: number) => {
-    const audio = audioRef.current;
-    setUserInteracted(true);
-    
-    if (audio) {
-      audio.pause();
-    }
+  const selectTrack = (index: number) => {
     setCurrentTrack(index);
     setShowPlaylist(false);
-    setIsPlaying(true);
-    setIsLoaded(false);
+    setIsPlaying(false);
+    // Audio will reload with new src
   };
+
+  const handleLongPress = () => {
+    setShowPlaylist(true);
+  };
+
+  let pressTimer: number;
 
   return (
     <div className="fixed top-4 right-4 z-50">
       <div className="relative">
         <button
-          onMouseDown={handleLongPressStart}
-          onMouseUp={handleLongPressEnd}
-          onMouseLeave={handleLongPressEnd}
-          onTouchStart={handleLongPressStart}
-          onTouchEnd={handleLongPressEnd}
-          onClick={handleInteraction}
-          className="p-3 hover:scale-110 transition-transform duration-300 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-lg border border-border touch-manipulation"
+          onClick={toggleMusic}
+          onMouseDown={() => {
+            pressTimer = window.setTimeout(handleLongPress, 500);
+          }}
+          onMouseUp={() => {
+            clearTimeout(pressTimer);
+          }}
+          onTouchStart={() => {
+            pressTimer = window.setTimeout(handleLongPress, 500);
+          }}
+          onTouchEnd={() => {
+            clearTimeout(pressTimer);
+          }}
+          className="p-3 hover:scale-110 transition-transform duration-300 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-lg border border-border"
           aria-label={isPlaying ? "Pause music" : "Play music"}
         >
           {isPlaying ? (
@@ -157,8 +115,8 @@ const MusicPlayer = () => {
       
       <audio
         ref={audioRef}
-        preload="auto"
         src={tracks[currentTrack].file}
+        preload="metadata"
       />
     </div>
   );
