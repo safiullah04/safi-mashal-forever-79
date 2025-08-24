@@ -51,26 +51,20 @@ const MusicPlayer = () => {
         console.log('🎵 Current track:', tracks[currentTrack].name);
         console.log('📁 File path:', testUrl);
         
-        // Force reload the audio source
+        // Set audio source and load
         audio.src = testUrl;
         audio.load();
         
-        // Wait for canplay event
-        await new Promise((resolve, reject) => {
-          const timeoutId = setTimeout(() => reject(new Error('Audio load timeout')), 5000);
-          audio.addEventListener('canplay', () => {
-            clearTimeout(timeoutId);
-            resolve(true);
-          }, { once: true });
-          audio.addEventListener('error', () => {
-            clearTimeout(timeoutId);
-            reject(new Error('Audio load error'));
-          }, { once: true });
-        });
-        
-        await audio.play();
-        setIsPlaying(true);
-        console.log('✅ Playing successfully');
+        // Try to play directly - simpler approach
+        try {
+          await audio.play();
+          setIsPlaying(true);
+          console.log('✅ Playing successfully');
+        } catch (playError) {
+          console.error('❌ Direct play failed:', playError);
+          setIsPlaying(false);
+          alert(`Play failed: ${playError.message}`);
+        }
       }
     } catch (error) {
       console.error('❌ Audio play/pause failed:', error);
