@@ -19,7 +19,7 @@ const PhotoSlideshow = () => {
   useEffect(() => {
     const loadImages = async () => {
       // Try to load images, starting with more and falling back to fewer
-      const tryImageCounts = [30, 20, 10];
+      const tryImageCounts = [40, 30, 20, 10];
       let workingImages: string[] = [];
       
       for (const count of tryImageCounts) {
