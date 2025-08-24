@@ -8,9 +8,9 @@ const MusicPlayer = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const tracks = [
-    { name: "Tujhe Dekha Toh", file: "Tujhe%20Dekha%20Toh%20-%201.mp3" },
-    { name: "Mehndi Laga Ke Rakhna", file: "Mehndi%20Laga%20Ke%20Rakhna%20-%202.mp3" },
-    { name: "Ho Gaya Hai Tujhko", file: "Ho%20Gaya%20Hai%20Tujhko%20-%203.mp3" }
+    { name: "Tujhe Dekha Toh", file: "TujheDekhaToh1.mp3" },
+    { name: "Mehndi Laga Ke Rakhna", file: "MehndiLagaKeRakhna2.mp3" },
+    { name: "Ho Gaya Hai Tujhko", file: "HoGayaHaiTujhko3.mp3" }
   ];
 
   const handlePlayPause = async () => {
