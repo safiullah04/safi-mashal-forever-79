@@ -8,9 +8,9 @@ const MusicPlayer = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const tracks = [
-    { name: "Tujhe Dekha Toh", file: "TujheDekhaToh1.mp3" },
-    { name: "Mehndi Laga Ke Rakhna", file: "MehndiLagaKeRakhna2.mp3" },
-    { name: "Ho Gaya Hai Tujhko", file: "HoGayaHaiTujhko3.mp3" }
+    { name: "Tujhe Dekha Toh", file: "TujheDekhaToh1" },
+    { name: "Mehndi Laga Ke Rakhna", file: "MehndiLagaKeRakhna2" },
+    { name: "Ho Gaya Hai Tujhko", file: "HoGayaHaiTujhko3" }
   ];
 
   const handlePlayPause = async () => {
@@ -22,21 +22,29 @@ const MusicPlayer = () => {
       return;
     }
 
-    // Test if file exists first
-    const testUrl = `/${tracks[currentTrack].file}`;
-    console.log('🔍 Testing file URL:', testUrl);
+    // Test multiple formats
+    const formats = ['mp3', 'wav', 'ogg'];
+    let workingUrl = null;
     
-    try {
-      const response = await fetch(testUrl, { method: 'HEAD' });
-      console.log('📁 File check response:', response.status);
-      if (!response.ok) {
-        console.error('❌ File not found at:', testUrl);
-        alert(`Audio file not found: ${testUrl}`);
-        return;
+    for (const format of formats) {
+      const testUrl = `/${tracks[currentTrack].file}.${format}`;
+      console.log('🔍 Testing file URL:', testUrl);
+      
+      try {
+        const response = await fetch(testUrl, { method: 'HEAD' });
+        console.log(`📁 File check response for ${format}:`, response.status);
+        if (response.ok) {
+          workingUrl = testUrl;
+          break;
+        }
+      } catch (fetchError) {
+        console.log(`❌ ${format} format not found:`, fetchError);
       }
-    } catch (fetchError) {
-      console.error('❌ File check failed:', fetchError);
-      alert(`Cannot access audio file: ${testUrl}`);
+    }
+    
+    if (!workingUrl) {
+      console.error('❌ No supported audio format found');
+      alert(`No supported audio format found for: ${tracks[currentTrack].name}`);
       return;
     }
 
@@ -49,10 +57,10 @@ const MusicPlayer = () => {
       } else {
         console.log('▶️ Attempting to play...');
         console.log('🎵 Current track:', tracks[currentTrack].name);
-        console.log('📁 File path:', testUrl);
+        console.log('📁 File path:', workingUrl);
         
         // Set audio source and load
-        audio.src = testUrl;
+        audio.src = workingUrl;
         audio.load();
         
         // Try to play directly - simpler approach
@@ -145,7 +153,6 @@ const MusicPlayer = () => {
 
       <audio
         ref={audioRef}
-        src={`/${tracks[currentTrack].file}`}
         preload="auto"
         onEnded={() => {
           console.log('🎵 Track ended');
