@@ -18,13 +18,23 @@ const MusicPlayer = () => {
     if (audio) {
       audio.volume = 0.3;
       
+      const handlePlay = () => setIsPlaying(true);
+      const handlePause = () => setIsPlaying(false);
       const handleEnded = () => {
         const nextTrack = (currentTrack + 1) % tracks.length;
         setCurrentTrack(nextTrack);
+        setIsPlaying(false); // Reset to allow user to play next
       };
 
+      audio.addEventListener('play', handlePlay);
+      audio.addEventListener('pause', handlePause);
       audio.addEventListener('ended', handleEnded);
-      return () => audio.removeEventListener('ended', handleEnded);
+      
+      return () => {
+        audio.removeEventListener('play', handlePlay);
+        audio.removeEventListener('pause', handlePause);
+        audio.removeEventListener('ended', handleEnded);
+      };
     }
   }, [currentTrack]);
 
@@ -33,22 +43,19 @@ const MusicPlayer = () => {
     if (!audio) return;
 
     if (audio.paused) {
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {
-        setIsPlaying(false);
-      });
+      audio.play().catch(console.error);
     } else {
       audio.pause();
-      setIsPlaying(false);
     }
   };
 
   const selectTrack = (index: number) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+    }
     setCurrentTrack(index);
     setShowPlaylist(false);
-    setIsPlaying(false);
-    // Audio will reload with new src
   };
 
   const handleLongPress = () => {
