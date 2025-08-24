@@ -71,7 +71,7 @@ const PhotoSlideshow = () => {
 
   return (
     <div className="slideshow-container">
-      <div className="relative w-full h-80 md:h-96 lg:h-[500px] rounded-lg overflow-hidden">
+      <div className="relative w-full aspect-square rounded-lg overflow-hidden">
         {shuffledImages.map((imagePath, index) => (
           <div
             key={imagePath}
@@ -106,15 +106,6 @@ const PhotoSlideshow = () => {
             />
           ))}
         </div>
-      </div>
-      
-      <div className="text-center mt-6">
-        <p className="text-lg font-elegant text-romantic-rose mb-1">
-          our love story
-        </p>
-        <p className="text-sm text-muted-foreground">
-          {shuffledImages.length} precious moments • randomized each visit
-        </p>
       </div>
     </div>
   );
