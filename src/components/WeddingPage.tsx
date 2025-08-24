@@ -3,6 +3,7 @@ import MusicPlayer from './MusicPlayer';
 import FloatingParticles from './FloatingParticles';
 import PhotoSlideshow from './PhotoSlideshow';
 import romanticBackground from '../assets/romantic-background.jpg';
+import { Heart } from 'lucide-react';
 
 const WeddingPage = () => {
   // Wedding date: January 31, 2026 at 1:00 PM
@@ -34,7 +35,7 @@ const WeddingPage = () => {
         {/* Names Header */}
         <div className="text-center mb-12 fade-in">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-calligraphy text-romantic-rose mb-4">
-            <span className="text-outline-pink">safi</span> <span className="text-xl md:text-2xl lg:text-3xl">&lt;3</span> <span className="text-outline-pink">mashal</span>
+            <span className="text-outline-pink">safi</span> <Heart className="inline w-8 h-8 md:w-12 md:h-12 lg:w-16 lg:h-16 text-pink-400 fill-pink-400 mx-2 md:mx-4" /> <span className="text-outline-pink">mashal</span>
           </h1>
           <div className="w-32 md:w-48 h-0.5 bg-gradient-to-r from-transparent via-romantic-gold to-transparent mx-auto mb-6"></div>
           <p className="text-lg md:text-xl font-elegant text-muted-foreground tracking-wider">
