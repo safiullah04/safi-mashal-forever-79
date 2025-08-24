@@ -2,11 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { Music, Pause, Play, ChevronDown } from 'lucide-react';
 
 const MusicPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false); // Start paused for mobile
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [longPressTimer, setLongPressTimer] = useState<number | null>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const tracks = [
@@ -24,8 +25,11 @@ const MusicPlayer = () => {
       
       const handleCanPlayThrough = () => {
         setIsLoaded(true);
-        if (isPlaying) {
-          audio.play().catch(console.error);
+        if (isPlaying && userInteracted) {
+          audio.play().catch(() => {
+            // If autoplay fails, just set to paused state
+            setIsPlaying(false);
+          });
         }
       };
 
@@ -58,15 +62,23 @@ const MusicPlayer = () => {
     }
   }, [currentTrack]);
 
-  const toggleMusic = () => {
+  const toggleMusic = async () => {
     const audio = audioRef.current;
     if (audio && isLoaded) {
+      setUserInteracted(true);
+      
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       } else {
-        audio.play().catch(console.error);
+        try {
+          await audio.play();
+          setIsPlaying(true);
+        } catch (error) {
+          console.log('Play failed:', error);
+          setIsPlaying(false);
+        }
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -102,8 +114,10 @@ const MusicPlayer = () => {
     }
   };
 
-  const selectTrack = (index: number) => {
+  const selectTrack = async (index: number) => {
     const audio = audioRef.current;
+    setUserInteracted(true);
+    
     if (audio) {
       audio.pause();
     }
