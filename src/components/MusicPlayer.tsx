@@ -6,7 +6,7 @@ const MusicPlayer = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const audioFile = "/TujheDekhaToh1.mp3";
+  const audioFile = "/TujheDekhaToh.mp3";
 
   // Auto-load song on mount
   useEffect(() => {
@@ -93,7 +93,7 @@ const MusicPlayer = () => {
 
       {/* Hidden audio element to force deployment inclusion */}
       <audio style={{ display: "none" }} controls>
-        <source src="/TujheDekhaToh1.mp3" type="audio/mpeg" />
+        <source src="/TujheDekhaToh.mp3" type="audio/mpeg" />
       </audio>
     </div>
   );
