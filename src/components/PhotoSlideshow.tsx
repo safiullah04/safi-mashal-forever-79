@@ -21,10 +21,16 @@ const PhotoSlideshow = () => {
     const loadImages = () => {
       // Load a smaller subset first for faster loading
       const imagePaths = [
-        '/sm007.JPG', '/sm012.jpg', '/sm022.jpg', '/sm027.jpg', '/sm035.jpg',
-        '/sm041.jpg', '/sm053.jpg', '/sm066.jpg', '/sm082.jpg', '/sm100.jpg',
-        '/sm125.jpg', '/sm143.jpg', '/sm153.jpg', '/sm184.jpg', '/sm214.jpg',
-        '/sm231.jpg', '/sm247.jpg', '/sm274.jpg', '/sm293.jpg', '/sm295.jpg'
+        '/sm007.JPG', '/sm009.jpg', '/sm011.jpeg', '/sm012.jpg', '/sm013.jpeg', 
+        '/sm017.jpeg', '/sm022.jpg', '/sm024.jpg', '/sm026.jpg', '/sm027.jpg', 
+        '/sm028.jpg', '/sm035.jpg', '/sm039.jpg', '/sm041.jpg', '/sm046.jpg', 
+        '/sm053.jpg', '/sm063.jpg', '/sm066.jpg', '/sm075.jpg', '/sm082.jpg', 
+        '/sm086.jpg', '/sm088.jpg', '/sm100.jpg', '/sm119.jpg', '/sm125.jpg', 
+        '/sm126.jpg', '/sm132.jpeg', '/sm143.jpg', '/sm148.jpg', '/sm153.jpg', 
+        '/sm163.jpeg', '/sm184.jpg', '/sm204.jpg', '/sm211.jpg', '/sm214.jpg', 
+        '/sm217.jpg', '/sm219.jpg', '/sm223.jpg', '/sm230.jpeg', '/sm231.jpg', 
+        '/sm240.jpg', '/sm247.jpg', '/sm251.jpeg', '/sm268.jpeg', '/sm274.jpg', 
+        '/sm287.jpg', '/sm293.jpg', '/sm294.jpg', '/sm295.jpg', '/sm300.jpg', '/sm301.jpg'
       ];
       
       // Preload first few images

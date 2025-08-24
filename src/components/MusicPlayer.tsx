@@ -70,20 +70,35 @@ const MusicPlayer = () => {
     }
   };
 
-  const handleMouseDown = () => {
-    const timer = window.setTimeout(() => {
-      setShowPlaylist(true);
-    }, 500); // 500ms long press
-    setLongPressTimer(timer);
-  };
-
-  const handleMouseUp = () => {
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
-      if (!showPlaylist) {
-        toggleMusic();
-      }
+    }
+    
+    if (showPlaylist) {
+      return; // Don't toggle if playlist is open
+    }
+    
+    toggleMusic();
+  };
+
+  const handleLongPressStart = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    const timer = window.setTimeout(() => {
+      setShowPlaylist(true);
+    }, 500);
+    setLongPressTimer(timer);
+  };
+
+  const handleLongPressEnd = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
     }
   };
 
@@ -98,33 +113,17 @@ const MusicPlayer = () => {
     setIsLoaded(false);
   };
 
-  const handleTouchStart = () => {
-    const timer = window.setTimeout(() => {
-      setShowPlaylist(true);
-    }, 500);
-    setLongPressTimer(timer);
-  };
-
-  const handleTouchEnd = () => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-    if (!showPlaylist) {
-      toggleMusic();
-    }
-  };
-
   return (
     <div className="fixed top-4 right-4 z-50">
       <div className="relative">
         <button
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="p-3 hover:scale-110 transition-transform duration-300 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-lg border border-border"
+          onMouseDown={handleLongPressStart}
+          onMouseUp={handleLongPressEnd}
+          onMouseLeave={handleLongPressEnd}
+          onTouchStart={handleLongPressStart}
+          onTouchEnd={handleLongPressEnd}
+          onClick={handleInteraction}
+          className="p-3 hover:scale-110 transition-transform duration-300 flex items-center gap-1 bg-background/80 backdrop-blur-sm rounded-lg border border-border touch-manipulation"
           aria-label={isPlaying ? "Pause music" : "Play music"}
         >
           {isPlaying ? (
