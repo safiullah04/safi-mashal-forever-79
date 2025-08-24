@@ -5,63 +5,63 @@ const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
-
-  const tracks = [
-    { name: "Tujhe Dekha Toh", file: "/Tujhe%20Dekha%20Toh%20-%201.mp3" },
-    { name: "Mehndi Laga Ke Rakhna", file: "/Mehndi%20Laga%20Ke%20Rakhna%20-%202.mp3" },
-    { name: "Ho Gaya Hai Tujhko", file: "/Ho%20Gaya%20Hai%20Tujhko%20-%203.mp3" }
-  ];
-
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const handlePlayPause = () => {
-    console.log('Button clicked, isPlaying:', isPlaying);
+  const tracks = [
+    { name: "Tujhe Dekha Toh", file: "Tujhe Dekha Toh - 1.mp3" },
+    { name: "Mehndi Laga Ke Rakhna", file: "Mehndi Laga Ke Rakhna - 2.mp3" },
+    { name: "Ho Gaya Hai Tujhko", file: "Ho Gaya Hai Tujhko - 3.mp3" }
+  ];
+
+  const handlePlayPause = async () => {
+    console.log('🎵 Button clicked - Current state:', isPlaying);
     const audio = audioRef.current;
+    
     if (!audio) {
-      console.error('Audio element not found');
+      console.error('❌ Audio element not found');
       return;
     }
 
-    console.log('Audio src:', audio.src);
-    console.log('Audio readyState:', audio.readyState);
-    
-    if (isPlaying) {
-      audio.pause();
+    try {
+      if (isPlaying) {
+        console.log('⏸️ Attempting to pause...');
+        audio.pause();
+        setIsPlaying(false);
+        console.log('✅ Paused successfully');
+      } else {
+        console.log('▶️ Attempting to play...');
+        console.log('🎵 Current track:', tracks[currentTrack].name);
+        console.log('📁 File path:', tracks[currentTrack].file);
+        
+        // Force reload the audio source
+        audio.src = `/${tracks[currentTrack].file}`;
+        audio.load();
+        
+        await audio.play();
+        setIsPlaying(true);
+        console.log('✅ Playing successfully');
+      }
+    } catch (error) {
+      console.error('❌ Audio play/pause failed:', error);
       setIsPlaying(false);
-      console.log('Paused');
-    } else {
-      // Ensure the correct source is loaded
-      audio.src = tracks[currentTrack].file;
-      console.log('Setting src to:', tracks[currentTrack].file);
       
-      audio.play()
-        .then(() => {
-          setIsPlaying(true);
-          console.log('Playing successfully');
-        })
-        .catch((error) => {
-          console.error('Play failed:', error);
-          setIsPlaying(false);
-          
-          // Try to load the audio first
-          audio.load();
-          setTimeout(() => {
-            audio.play()
-              .then(() => {
-                setIsPlaying(true);
-                console.log('Playing after load');
-              })
-              .catch((err) => {
-                console.error('Still failed after load:', err);
-              });
-          }, 100);
-        });
+      // Try alternative approach
+      try {
+        console.log('🔄 Trying alternative play method...');
+        const newAudio = new Audio(`/${tracks[currentTrack].file}`);
+        newAudio.volume = 0.5;
+        await newAudio.play();
+        console.log('✅ Alternative method worked');
+      } catch (altError) {
+        console.error('❌ Alternative method also failed:', altError);
+      }
     }
   };
 
   const selectTrack = (index: number) => {
+    console.log('🎵 Selecting track:', tracks[index].name);
     const audio = audioRef.current;
-    if (audio) {
+    if (audio && !audio.paused) {
       audio.pause();
     }
     setCurrentTrack(index);
@@ -69,22 +69,22 @@ const MusicPlayer = () => {
     setShowPlaylist(false);
   };
 
-  const handleTrackEnd = () => {
-    setIsPlaying(false);
-    const nextTrack = (currentTrack + 1) % tracks.length;
-    setCurrentTrack(nextTrack);
-  };
-
   return (
     <div className="fixed top-6 right-6 z-50">
       <div className="relative">
+        {/* Debug info for testing */}
+        <div className="absolute -top-8 right-0 text-xs text-white bg-black px-2 py-1 rounded">
+          {isPlaying ? 'PLAYING' : 'PAUSED'} | Track {currentTrack + 1}
+        </div>
+        
         <button
           onClick={handlePlayPause}
           onContextMenu={(e) => {
             e.preventDefault();
             setShowPlaylist(!showPlaylist);
           }}
-          className="p-4 rounded-full bg-pink-500/20 hover:bg-pink-500/30 transition-all duration-200 shadow-lg border border-pink-500/40 cursor-pointer touch-manipulation"
+          className="p-4 rounded-full bg-pink-500/20 hover:bg-pink-500/30 transition-all duration-200 shadow-lg border border-pink-500/40 cursor-pointer touch-manipulation active:scale-95"
+          type="button"
         >
           {isPlaying ? (
             <Pause className="w-6 h-6 text-pink-400" />
@@ -105,6 +105,7 @@ const MusicPlayer = () => {
                 className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
                   index === currentTrack ? 'bg-gray-100 dark:bg-gray-700 font-medium' : ''
                 }`}
+                type="button"
               >
                 {track.name}
               </button>
@@ -112,6 +113,7 @@ const MusicPlayer = () => {
             <button
               onClick={() => setShowPlaylist(false)}
               className="w-full text-left px-3 py-1 text-xs text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 border-t"
+              type="button"
             >
               Close
             </button>
@@ -128,12 +130,22 @@ const MusicPlayer = () => {
 
       <audio
         ref={audioRef}
-        src={tracks[currentTrack].file}
+        src={`/${tracks[currentTrack].file}`}
         preload="auto"
-        onEnded={handleTrackEnd}
-        onError={(e) => console.error('Audio error:', e)}
-        onLoadStart={() => console.log('Audio load started')}
-        onCanPlay={() => console.log('Audio can play')}
+        onEnded={() => {
+          console.log('🎵 Track ended');
+          setIsPlaying(false);
+          const nextTrack = (currentTrack + 1) % tracks.length;
+          setCurrentTrack(nextTrack);
+        }}
+        onError={(e) => {
+          console.error('❌ Audio error:', e);
+          console.error('❌ Failed to load:', `/${tracks[currentTrack].file}`);
+        }}
+        onLoadStart={() => console.log('📥 Audio load started')}
+        onCanPlay={() => console.log('✅ Audio ready to play')}
+        onPlay={() => console.log('▶️ Audio started playing')}
+        onPause={() => console.log('⏸️ Audio paused')}
       />
     </div>
   );
