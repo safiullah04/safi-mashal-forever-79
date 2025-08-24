@@ -76,7 +76,7 @@ const PhotoSlideshow = () => {
               <span className="text-3xl">📸</span>
             </div>
             <p className="text-lg font-elegant mb-2">
-              loading our love story...
+              loading memories...
             </p>
           </div>
         </div>

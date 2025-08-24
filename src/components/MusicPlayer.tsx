@@ -8,24 +8,36 @@ const MusicPlayer = () => {
 
   const audioFile = "/TujheDekhaToh.mp3";
 
-  // Auto-load song on mount
+  // Auto-load and play song on mount
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && !isLoaded) {
-      const audioSrc = audioFile;
-      audio.src = audioSrc;
+      audio.src = audioFile;
       audio.load();
       setIsLoaded(true);
       
-      // Try autoplay
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
+      // Add user interaction listener for autoplay
+      const enableAutoplay = () => {
+        audio.play().then(() => {
           setIsPlaying(true);
         }).catch((error) => {
           console.log('Autoplay blocked:', error);
         });
-      }
+        // Remove listeners after first interaction
+        document.removeEventListener('click', enableAutoplay);
+        document.removeEventListener('keydown', enableAutoplay);
+        document.removeEventListener('touchstart', enableAutoplay);
+      };
+      
+      // Try immediate autoplay first
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        // If autoplay fails, wait for user interaction
+        document.addEventListener('click', enableAutoplay);
+        document.addEventListener('keydown', enableAutoplay);
+        document.addEventListener('touchstart', enableAutoplay);
+      });
     }
   }, [isLoaded]);
 
