@@ -57,7 +57,7 @@ const MusicPlayer = () => {
   };
 
   return (
-    <div className="fixed top-6 right-6 z-50">
+    <div className="fixed top-6 right-6 z-50" style={{ marginRight: '2rem' }}>
       <button
         onClick={toggleMusic}
         className="romantic-card p-3 rounded-full hover:scale-110 transition-transform duration-300 romantic-glow"

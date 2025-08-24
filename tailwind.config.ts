@@ -65,7 +65,8 @@ export default {
 			backgroundImage: {
 				'gradient-romantic': 'var(--gradient-romantic)',
 				'gradient-sunset': 'var(--gradient-sunset)',
-				'gradient-glow': 'var(--gradient-glow)'
+				'gradient-glow': 'var(--gradient-glow)',
+				'gradient-bokeh': 'var(--gradient-bokeh)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

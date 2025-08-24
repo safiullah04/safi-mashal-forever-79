@@ -68,37 +68,37 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-2xl mx-auto">
         <div className="romantic-card rounded-2xl p-4 md:p-6 text-center floating" style={{ animationDelay: '0s' }}>
-          <div className="text-3xl md:text-5xl font-bold text-romantic-rose mb-2">
+          <div className="text-4xl md:text-6xl lg:text-7xl font-black text-romantic-rose mb-2">
             {timeLeft.days}
           </div>
-          <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-elegant">
+          <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
             {timeLeft.days === 1 ? 'Day' : 'Days'}
           </div>
         </div>
         
         <div className="romantic-card rounded-2xl p-4 md:p-6 text-center floating" style={{ animationDelay: '0.2s' }}>
-          <div className="text-3xl md:text-5xl font-bold text-romantic-rose mb-2">
+          <div className="text-4xl md:text-6xl lg:text-7xl font-black text-romantic-rose mb-2">
             {timeLeft.hours}
           </div>
-          <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-elegant">
+          <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
             {timeLeft.hours === 1 ? 'Hour' : 'Hours'}
           </div>
         </div>
         
         <div className="romantic-card rounded-2xl p-4 md:p-6 text-center floating" style={{ animationDelay: '0.4s' }}>
-          <div className="text-3xl md:text-5xl font-bold text-romantic-rose mb-2">
+          <div className="text-4xl md:text-6xl lg:text-7xl font-black text-romantic-rose mb-2">
             {timeLeft.minutes}
           </div>
-          <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-elegant">
+          <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
             {timeLeft.minutes === 1 ? 'Minute' : 'Minutes'}
           </div>
         </div>
         
         <div className="romantic-card rounded-2xl p-4 md:p-6 text-center floating" style={{ animationDelay: '0.6s' }}>
-          <div className="text-3xl md:text-5xl font-bold text-romantic-rose mb-2">
+          <div className="text-4xl md:text-6xl lg:text-7xl font-black text-romantic-rose mb-2">
             {timeLeft.seconds}
           </div>
-          <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-elegant">
+          <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
             {timeLeft.seconds === 1 ? 'Second' : 'Seconds'}
           </div>
         </div>

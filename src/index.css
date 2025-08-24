@@ -42,15 +42,19 @@
     --ring: 345 65% 75%;
     --radius: 0.75rem;
     
-    /* Gradients */
-    --gradient-romantic: linear-gradient(135deg, hsl(345, 65%, 90%) 0%, hsl(45, 30%, 95%) 50%, hsl(345, 45%, 95%) 100%);
+    /* Enhanced Gradients */
+    --gradient-romantic: linear-gradient(135deg, hsl(25, 70%, 88%) 0%, hsl(345, 60%, 92%) 30%, hsl(45, 75%, 90%) 100%);
     --gradient-sunset: linear-gradient(180deg, hsl(345, 80%, 95%) 0%, hsl(45, 40%, 98%) 100%);
     --gradient-glow: radial-gradient(circle at center, hsl(345, 65%, 75%, 0.3) 0%, transparent 70%);
+    --gradient-bokeh: radial-gradient(circle at 20% 80%, hsl(345, 70%, 95%, 0.4) 0%, transparent 50%), 
+                      radial-gradient(circle at 80% 20%, hsl(45, 80%, 92%, 0.3) 0%, transparent 50%),
+                      radial-gradient(circle at 40% 40%, hsl(25, 60%, 94%, 0.2) 0%, transparent 50%);
     
     /* Animations & Effects */
     --transition-romantic: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     --shadow-romantic: 0 20px 40px -10px hsl(345, 65%, 75%, 0.3);
     --shadow-glow: 0 0 60px hsl(345, 80%, 85%, 0.4);
+    --shadow-text-glow: 0 0 40px hsl(345, 70%, 80%, 0.6), 0 4px 20px hsl(345, 60%, 70%, 0.3);
     
     /* Typography Fonts */
     --font-calligraphy: 'Dancing Script', cursive;
@@ -66,8 +70,22 @@
   body {
     @apply bg-background text-foreground;
     background: var(--gradient-romantic);
+    background-attachment: fixed;
+    position: relative;
     min-height: 100vh;
     font-family: 'Inter', -apple-system, sans-serif;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-bokeh);
+    pointer-events: none;
+    z-index: 1;
   }
 }
 
@@ -93,6 +111,24 @@
   
   .romantic-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  .text-glow {
+    text-shadow: var(--shadow-text-glow);
+  }
+
+  .slideshow-container {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-romantic);
+    border-radius: 1.5rem;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
   }
   
   .romantic-card {
