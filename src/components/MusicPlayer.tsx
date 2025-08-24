@@ -74,10 +74,6 @@ const MusicPlayer = () => {
   return (
     <div className="fixed top-6 right-6 z-50">
       <div className="relative">
-        {/* Debug info for testing */}
-        <div className="absolute -top-8 right-0 text-xs text-white bg-black px-2 py-1 rounded">
-          {isPlaying ? 'PLAYING' : 'PAUSED'} | Track {currentTrack + 1}
-        </div>
         
         <button
           onClick={handlePlayPause}
