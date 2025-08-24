@@ -17,40 +17,23 @@ const PhotoSlideshow = () => {
 
   // Load and shuffle images on component mount
   useEffect(() => {
-    const loadImages = async () => {
-      // Try to load images, starting with more and falling back to fewer
-      const tryImageCounts = [50, 40, 30, 20, 10];
-      let workingImages: string[] = [];
-      
-      for (const count of tryImageCounts) {
-        const imageNumbers = Array.from({ length: count }, (_, i) => i + 1);
-        const imagePaths = imageNumbers.map(num => 
-          `/images/slideshow/img-${num.toString().padStart(3, '0')}.jpg`
-        );
-        
-        // Test if images exist by trying to load the first few
-        const testImage = new Image();
-        try {
-          await new Promise((resolve, reject) => {
-            testImage.onload = resolve;
-            testImage.onerror = reject;
-            testImage.src = imagePaths[0];
-          });
-          workingImages = imagePaths;
-          break;
-        } catch {
-          // Try next count
-          continue;
-        }
-      }
-      
-      if (workingImages.length === 0) {
-        // Fallback to placeholder
-        workingImages = ['/placeholder.svg'];
-      }
+    const loadImages = () => {
+      // Your actual images from the public folder
+      const imagePaths = [
+        '/sm007.JPG', '/sm009.jpg', '/sm011.jpeg', '/sm012.jpg', '/sm013.jpeg',
+        '/sm017.jpeg', '/sm022.jpg', '/sm024.jpg', '/sm026.jpg', '/sm027.jpg',
+        '/sm028.jpg', '/sm035.jpg', '/sm039.jpg', '/sm041.jpg', '/sm046.jpg',
+        '/sm053.jpg', '/sm063.jpg', '/sm066.jpg', '/sm075.jpg', '/sm082.jpg',
+        '/sm086.jpg', '/sm088.jpg', '/sm100.jpg', '/sm119.jpg', '/sm125.jpg',
+        '/sm126.jpg', '/sm132.jpeg', '/sm143.jpg', '/sm148.jpg', '/sm153.jpg',
+        '/sm163.jpeg', '/sm184.jpg', '/sm204.jpg', '/sm211.jpg', '/sm214.jpg',
+        '/sm217.jpg', '/sm219.jpg', '/sm223.jpg', '/sm230.jpeg', '/sm231.jpg',
+        '/sm240.jpg', '/sm247.jpg', '/sm251.jpeg', '/sm268.jpeg', '/sm274.jpg',
+        '/sm287.jpg', '/sm293.jpg', '/sm294.jpg', '/sm295.jpg'
+      ];
       
       // Shuffle the images randomly
-      const shuffled = shuffleArray(workingImages);
+      const shuffled = shuffleArray(imagePaths);
       setShuffledImages(shuffled);
       setIsLoading(false);
     };
