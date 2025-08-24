@@ -86,18 +86,18 @@ const PhotoSlideshow = () => {
 
   return (
     <div className="slideshow-container w-full flex justify-center px-4">
-      <div className="relative w-full max-w-4xl max-h-[70vh] flex items-center justify-center">
+      <div className="relative w-full max-w-2xl aspect-[4/3] rounded-lg overflow-hidden">
         {shuffledImages.map((imagePath, index) => (
           <div
             key={imagePath}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center justify-center ${
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
               index === currentImageIndex ? 'opacity-100' : 'opacity-0'
             }`}
           >
             <img
               src={imagePath}
               alt={`Love story moment ${index + 1}`}
-              className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+              className="w-full h-full object-contain"
               loading="lazy"
             />
           </div>

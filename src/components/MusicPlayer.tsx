@@ -6,13 +6,13 @@ const MusicPlayer = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const audioFile = "TujheDekhaToh1.mp3";
+  const audioFile = "/TujheDekhaToh1.mp3";
 
   // Auto-load song on mount
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && !isLoaded) {
-      const audioSrc = `/${audioFile}`;
+      const audioSrc = audioFile;
       audio.src = audioSrc;
       audio.load();
       setIsLoaded(true);
@@ -41,7 +41,7 @@ const MusicPlayer = () => {
       setIsPlaying(false);
     } else {
       // Force reload to ensure audio is properly loaded
-      const audioSrc = `/${audioFile}`;
+      const audioSrc = audioFile;
       
       audio.src = audioSrc;
       audio.load();
