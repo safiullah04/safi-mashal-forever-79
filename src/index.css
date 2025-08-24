@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Romantic Wedding Design System - All colors MUST be HSL */
+
+@layer base {
+  :root {
+    /* Romantic Wedding Color Palette */
+    --background: 350 25% 97%;
+    --foreground: 340 15% 25%;
+    
+    /* Romantic Primary Colors */
+    --primary: 345 65% 75%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 345 80% 85%;
+    
+    /* Soft Romantic Tones */
+    --romantic-rose: 345 65% 75%;
+    --romantic-blush: 350 45% 85%;
+    --romantic-cream: 45 30% 95%;
+    --romantic-gold: 45 85% 70%;
+    --romantic-ivory: 45 15% 98%;
+    
+    /* Card & UI Elements */
+    --card: 0 0% 100%;
+    --card-foreground: 340 15% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 15% 25%;
+    
+    /* Secondary & Muted */
+    --secondary: 350 20% 92%;
+    --secondary-foreground: 340 15% 25%;
+    --muted: 350 15% 94%;
+    --muted-foreground: 340 10% 45%;
+    --accent: 345 35% 88%;
+    --accent-foreground: 340 15% 25%;
+    
+    /* Borders & Inputs */
+    --border: 345 20% 88%;
+    --input: 345 20% 88%;
+    --ring: 345 65% 75%;
+    --radius: 0.75rem;
+    
+    /* Gradients */
+    --gradient-romantic: linear-gradient(135deg, hsl(345, 65%, 90%) 0%, hsl(45, 30%, 95%) 50%, hsl(345, 45%, 95%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(345, 80%, 95%) 0%, hsl(45, 40%, 98%) 100%);
+    --gradient-glow: radial-gradient(circle at center, hsl(345, 65%, 75%, 0.3) 0%, transparent 70%);
+    
+    /* Animations & Effects */
+    --transition-romantic: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-romantic: 0 20px 40px -10px hsl(345, 65%, 75%, 0.3);
+    --shadow-glow: 0 0 60px hsl(345, 80%, 85%, 0.4);
+    
+    /* Typography Fonts */
+    --font-calligraphy: 'Dancing Script', cursive;
+    --font-elegant: 'Playfair Display', serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: var(--gradient-romantic);
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, sans-serif;
+  }
+}
+
+/* Custom Components & Animations */
+@layer components {
+  .calligraphy {
+    font-family: var(--font-calligraphy);
+    font-weight: 400;
+  }
+  
+  .elegant {
+    font-family: var(--font-elegant);
+    font-weight: 400;
+  }
+  
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .fade-in {
+    animation: fadeIn 1.5s ease-out;
+  }
+  
+  .romantic-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .romantic-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-romantic);
+  }
+}
+
+@layer utilities {
+  .text-romantic-rose {
+    color: hsl(var(--romantic-rose));
+  }
+  
+  .text-romantic-gold {
+    color: hsl(var(--romantic-gold));
+  }
+  
+  .bg-romantic-cream {
+    background-color: hsl(var(--romantic-cream));
+  }
+}
+
+/* Keyframe Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-romantic {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
