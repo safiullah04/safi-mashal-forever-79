@@ -7,65 +7,76 @@ const MusicPlayer = () => {
   const [showPlaylist, setShowPlaylist] = useState(false);
 
   const tracks = [
-    { name: "Tujhe Dekha Toh", file: "/Tujhe Dekha Toh - 1.mp3" },
-    { name: "Mehndi Laga Ke Rakhna", file: "/Mehndi Laga Ke Rakhna - 2.mp3" },
-    { name: "Ho Gaya Hai Tujhko", file: "/Ho Gaya Hai Tujhko - 3.mp3" }
+    { name: "Tujhe Dekha Toh", file: "/Tujhe%20Dekha%20Toh%20-%201.mp3" },
+    { name: "Mehndi Laga Ke Rakhna", file: "/Mehndi%20Laga%20Ke%20Rakhna%20-%202.mp3" },
+    { name: "Ho Gaya Hai Tujhko", file: "/Ho%20Gaya%20Hai%20Tujhko%20-%203.mp3" }
   ];
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Create audio element if it doesn't exist
-  const getAudio = () => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio(tracks[currentTrack].file);
-      audioRef.current.volume = 0.5;
-      audioRef.current.addEventListener('ended', () => {
-        setIsPlaying(false);
-        const nextTrack = (currentTrack + 1) % tracks.length;
-        setCurrentTrack(nextTrack);
-      });
-    }
-    return audioRef.current;
-  };
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const handlePlayPause = () => {
-    console.log('Button clicked!'); // Debug log
-    const audio = getAudio();
+    console.log('Button clicked, isPlaying:', isPlaying);
+    const audio = audioRef.current;
+    if (!audio) {
+      console.error('Audio element not found');
+      return;
+    }
+
+    console.log('Audio src:', audio.src);
+    console.log('Audio readyState:', audio.readyState);
     
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
       console.log('Paused');
     } else {
+      // Ensure the correct source is loaded
       audio.src = tracks[currentTrack].file;
+      console.log('Setting src to:', tracks[currentTrack].file);
+      
       audio.play()
         .then(() => {
           setIsPlaying(true);
-          console.log('Playing');
+          console.log('Playing successfully');
         })
         .catch((error) => {
           console.error('Play failed:', error);
           setIsPlaying(false);
+          
+          // Try to load the audio first
+          audio.load();
+          setTimeout(() => {
+            audio.play()
+              .then(() => {
+                setIsPlaying(true);
+                console.log('Playing after load');
+              })
+              .catch((err) => {
+                console.error('Still failed after load:', err);
+              });
+          }, 100);
         });
     }
   };
 
   const selectTrack = (index: number) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
     }
     setCurrentTrack(index);
     setIsPlaying(false);
     setShowPlaylist(false);
-    // Reset audio for new track
-    if (audioRef.current) {
-      audioRef.current.src = tracks[index].file;
-    }
+  };
+
+  const handleTrackEnd = () => {
+    setIsPlaying(false);
+    const nextTrack = (currentTrack + 1) % tracks.length;
+    setCurrentTrack(nextTrack);
   };
 
   return (
     <div className="fixed top-6 right-6 z-50">
-      {/* Main Play Button */}
       <div className="relative">
         <button
           onClick={handlePlayPause}
@@ -73,8 +84,7 @@ const MusicPlayer = () => {
             e.preventDefault();
             setShowPlaylist(!showPlaylist);
           }}
-          className="p-4 rounded-full bg-pink-500/20 hover:bg-pink-500/30 transition-all duration-200 shadow-lg border border-pink-500/40 cursor-pointer"
-          style={{ WebkitTapHighlightColor: 'transparent' }}
+          className="p-4 rounded-full bg-pink-500/20 hover:bg-pink-500/30 transition-all duration-200 shadow-lg border border-pink-500/40 cursor-pointer touch-manipulation"
         >
           {isPlaying ? (
             <Pause className="w-6 h-6 text-pink-400" />
@@ -83,7 +93,6 @@ const MusicPlayer = () => {
           )}
         </button>
 
-        {/* Playlist Dropdown */}
         {showPlaylist && (
           <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 border rounded-lg shadow-xl min-w-[200px] py-1 z-[60]">
             <div className="px-3 py-2 text-xs text-gray-500 font-medium border-b">
@@ -110,13 +119,22 @@ const MusicPlayer = () => {
         )}
       </div>
 
-      {/* Click outside to close */}
       {showPlaylist && (
         <div 
           className="fixed inset-0 z-40" 
           onClick={() => setShowPlaylist(false)}
         />
       )}
+
+      <audio
+        ref={audioRef}
+        src={tracks[currentTrack].file}
+        preload="auto"
+        onEnded={handleTrackEnd}
+        onError={(e) => console.error('Audio error:', e)}
+        onLoadStart={() => console.log('Audio load started')}
+        onCanPlay={() => console.log('Audio can play')}
+      />
     </div>
   );
 };
