@@ -86,7 +86,7 @@ const PhotoSlideshow = () => {
 
   return (
     <div className="slideshow-container w-full flex justify-center px-4">
-      <div className="relative w-[85vw] h-[85vw] max-w-lg max-h-lg rounded-lg overflow-hidden">
+      <div className="relative w-[85vw] aspect-[4/3] max-w-2xl rounded-lg overflow-hidden">
         {shuffledImages.map((imagePath, index) => (
           <div
             key={imagePath}
