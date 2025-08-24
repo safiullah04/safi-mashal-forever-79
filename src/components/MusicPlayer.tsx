@@ -67,18 +67,16 @@ const MusicPlayer = () => {
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
-    }
-    if (!showPlaylist) {
-      toggleMusic();
+      if (!showPlaylist) {
+        toggleMusic();
+      }
     }
   };
 
   const selectTrack = (index: number) => {
     setCurrentTrack(index);
     setShowPlaylist(false);
-    if (!isPlaying) {
-      setIsPlaying(true);
-    }
+    setIsPlaying(true);
   };
 
   const handleTouchStart = () => {
