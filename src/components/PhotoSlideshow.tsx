@@ -18,13 +18,39 @@ const PhotoSlideshow = () => {
   // Load and shuffle images on component mount
   useEffect(() => {
     const loadImages = async () => {
-      const imageNumbers = Array.from({ length: 20 }, (_, i) => i + 1);
-      const imagePaths = imageNumbers.map(num => 
-        `/images/slideshow/img-${num.toString().padStart(3, '0')}.jpg`
-      );
+      // Try to load images, starting with more and falling back to fewer
+      const tryImageCounts = [30, 20, 10];
+      let workingImages: string[] = [];
+      
+      for (const count of tryImageCounts) {
+        const imageNumbers = Array.from({ length: count }, (_, i) => i + 1);
+        const imagePaths = imageNumbers.map(num => 
+          `/images/slideshow/img-${num.toString().padStart(3, '0')}.jpg`
+        );
+        
+        // Test if images exist by trying to load the first few
+        const testImage = new Image();
+        try {
+          await new Promise((resolve, reject) => {
+            testImage.onload = resolve;
+            testImage.onerror = reject;
+            testImage.src = imagePaths[0];
+          });
+          workingImages = imagePaths;
+          break;
+        } catch {
+          // Try next count
+          continue;
+        }
+      }
+      
+      if (workingImages.length === 0) {
+        // Fallback to placeholder
+        workingImages = ['/placeholder.svg'];
+      }
       
       // Shuffle the images randomly
-      const shuffled = shuffleArray(imagePaths);
+      const shuffled = shuffleArray(workingImages);
       setShuffledImages(shuffled);
       setIsLoading(false);
     };
