@@ -66,7 +66,7 @@ const WeddingPage = () => {
         {/* Footer */}
         <div className="text-center fade-in">
           <p className="text-sm text-muted-foreground font-elegant mb-2">
-            With love and excitement for our future together
+            With love ❤️
           </p>
           <div className="flex items-center justify-center space-x-2 text-romantic-gold">
             <span>✨</span>
