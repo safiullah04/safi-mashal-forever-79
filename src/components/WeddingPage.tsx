@@ -32,7 +32,7 @@ const WeddingPage = () => {
         
         {/* Names Header */}
         <div className="text-center mb-12 fade-in">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-calligraphy text-romantic-rose mb-4 text-glow">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-calligraphy text-romantic-rose mb-4 text-outline">
             safi <span className="text-2xl md:text-3xl lg:text-4xl">🩷</span> mashal
           </h1>
           <div className="w-32 md:w-48 h-0.5 bg-gradient-to-r from-transparent via-romantic-gold to-transparent mx-auto mb-6"></div>

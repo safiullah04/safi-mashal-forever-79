@@ -117,6 +117,16 @@
     text-shadow: var(--shadow-text-glow);
   }
 
+  .text-outline {
+    text-shadow: 
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000,
+       0 0 40px hsl(345, 70%, 80%, 0.6), 
+       0 4px 20px hsl(345, 60%, 70%, 0.3);
+  }
+
   .slideshow-container {
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(15px);
