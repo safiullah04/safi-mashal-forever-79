@@ -63,7 +63,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
   return (
     <div className="text-center fade-in">
       <h2 className="text-2xl md:text-3xl font-elegant text-romantic-rose mb-8">
-        {isPastDate ? "Time together since our wedding..." : "Counting down to forever..."}
+        {isPastDate ? "time together since our wedding..." : "counting down to forever..."}
       </h2>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-2xl mx-auto">
@@ -72,7 +72,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
             {timeLeft.days}
           </div>
           <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
-            {timeLeft.days === 1 ? 'Day' : 'Days'}
+            {timeLeft.days === 1 ? 'day' : 'days'}
           </div>
         </div>
         
@@ -81,7 +81,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
             {timeLeft.hours}
           </div>
           <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
-            {timeLeft.hours === 1 ? 'Hour' : 'Hours'}
+            {timeLeft.hours === 1 ? 'hour' : 'hours'}
           </div>
         </div>
         
@@ -90,7 +90,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
             {timeLeft.minutes}
           </div>
           <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
-            {timeLeft.minutes === 1 ? 'Minute' : 'Minutes'}
+            {timeLeft.minutes === 1 ? 'minute' : 'minutes'}
           </div>
         </div>
         
@@ -99,7 +99,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
             {timeLeft.seconds}
           </div>
           <div className="text-xs md:text-sm text-muted-foreground/70 uppercase tracking-widest font-elegant font-light">
-            {timeLeft.seconds === 1 ? 'Second' : 'Seconds'}
+            {timeLeft.seconds === 1 ? 'second' : 'seconds'}
           </div>
         </div>
       </div>

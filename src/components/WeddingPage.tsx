@@ -33,11 +33,11 @@ const WeddingPage = () => {
         {/* Names Header */}
         <div className="text-center mb-12 fade-in">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-calligraphy text-romantic-rose mb-4 text-glow">
-            Safi & Mashal
+            safi & mashal
           </h1>
           <div className="w-32 md:w-48 h-0.5 bg-gradient-to-r from-transparent via-romantic-gold to-transparent mx-auto mb-6"></div>
           <p className="text-lg md:text-xl font-elegant text-muted-foreground tracking-wider">
-            January 31, 2026 • 1:00 PM
+            january 31, 2026 • 1:00 pm
           </p>
         </div>
         
@@ -54,10 +54,10 @@ const WeddingPage = () => {
                 <span className="text-3xl">📸</span>
               </div>
               <p className="text-lg font-elegant mb-2">
-                Our Love Story Slideshow
+                our love story slideshow
               </p>
               <p className="text-sm text-muted-foreground">
-                Coming soon: Engagement photos with smooth transitions
+                coming soon: engagement photos with smooth transitions
               </p>
             </div>
           </div>
@@ -66,7 +66,7 @@ const WeddingPage = () => {
         {/* Footer */}
         <div className="text-center fade-in">
           <p className="text-sm text-muted-foreground font-elegant mb-2">
-            With love ❤️
+            with love ❤️
           </p>
         </div>
         
