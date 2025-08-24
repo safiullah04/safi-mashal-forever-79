@@ -54,26 +54,31 @@ const MusicPlayer = () => {
       setIsPlaying(false);
     } else {
       console.log('▶️ Playing...');
-      const expectedSrc = `${window.location.origin}/${tracks[currentTrack].file}.mp3`;
-      console.log('🎵 Expected source:', expectedSrc);
-      console.log('🎵 Current source:', audio.src);
       
-      // Always reload if source doesn't match
-      if (audio.src !== expectedSrc) {
-        console.log('🔄 Reloading audio source...');
-        const audioSrc = `/${tracks[currentTrack].file}.mp3`;
-        audio.src = audioSrc;
-        audio.load();
-        setIsLoaded(true);
+      // Force reload to ensure audio is properly loaded
+      const audioSrc = `/${tracks[currentTrack].file}.mp3`;
+      console.log('🎵 Loading source:', audioSrc);
+      
+      audio.src = audioSrc;
+      audio.load();
+      
+      // Wait for load then play
+      const playAudio = () => {
+        audio.play().then(() => {
+          console.log('✅ Playing successfully');
+          setIsPlaying(true);
+        }).catch((error) => {
+          console.error('❌ Play failed:', error);
+          alert(`Play failed: ${error.message}`);
+        });
+      };
+      
+      // If audio can play through, play immediately, otherwise wait for canplaythrough
+      if (audio.readyState >= 4) {
+        playAudio();
+      } else {
+        audio.addEventListener('canplaythrough', playAudio, { once: true });
       }
-      
-      audio.play().then(() => {
-        console.log('✅ Playing successfully');
-        setIsPlaying(true);
-      }).catch((error) => {
-        console.error('❌ Play failed:', error);
-        alert(`Play failed: ${error.message}`);
-      });
     }
   };
 
